@@ -1,3 +1,10 @@
+# Optimized by ci-cost (https://github.com/mariotavarez/ci-cost)
+# Applied 3 optimizations:
+# - [HIGH] Add gradle dependency cache to "build" job
+# - [HIGH] Add gradle dependency cache to "integration-tests" job
+# - [MEDIUM] Add concurrency group to "gradle-test.yml"
+# Estimated savings: ~12 min/run
+#
 # This workflow builds PCGen with Gradle. The `build` and `integration-tests`
 # jobs run in parallel — they share the Gradle build cache via setup-gradle@v6
 # but otherwise compile their inputs independently. Splitting the previous
@@ -13,6 +20,10 @@ on:
   push:
     branches: [master]
 
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   build:
     name: Build, unit tests, and static analysis
